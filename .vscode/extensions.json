@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "ms-vscode.vscode-json",
+    "formulahendry.dotnet-test-explorer",
+    "jmrog.vscode-nuget-package-manager",
+    "ms-vscode.powershell",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}
