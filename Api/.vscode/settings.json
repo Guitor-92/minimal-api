@@ -1,0 +1,13 @@
+{
+  "dotnet.defaultSolution": "minimal-api.sln",
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableRoslynAnalyzers": true,
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true
+  },
+  "dotnet-test-explorer.testProjectPath": "**/*Tests.csproj",
+  "csharp.semanticHighlighting.enabled": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true
+}
