@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MinimalApi.Dominio.Entidades;
 
 namespace Test.Domain.Entidades;
