@@ -3,9 +3,13 @@ using MinimalApi.Dominio.Entidades;
 
 namespace Test.Domain.Entidades;
 
+
+
 [TestClass]
 public class AdministradorTest
 {
+
+    
     [TestMethod]
     public void TestarGetSetPropriedades()
     {
