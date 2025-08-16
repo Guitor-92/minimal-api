@@ -1,10 +1,10 @@
-using MinimalApi.Infraestrutura.Db;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using MinimalApi.Dominio.Entidades;
 using MinimalApi.Dominio.Servicos;
-using Microsoft.EntityFrameworkCore;
+using MinimalApi.Infraestrutura.Db;
 
 namespace Test.Domain.Entidades;
 
@@ -13,14 +13,25 @@ public class AdministradorServicoTest
 {
     private DbContexto CriarContextoDeTeste()
     {
+        var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var path = Path.GetFullPath(Path.Combine(assemblyPath ?? "", "..", "..", ".."));
+
         var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
+            .SetBasePath(path ?? Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddEnvironmentVariables();
 
         var configuration = builder.Build();
 
-        return new DbContexto(configuration);
+        var context = new DbContexto(configuration);
+
+        // Limpa a tabela e reseta o contador de AUTO_INCREMENT antes de cada teste
+        context.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS = 0;");
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
+        context.Database.ExecuteSqlRaw("ALTER TABLE Administradores AUTO_INCREMENT = 1");
+        context.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS = 1;");
+
+        return context;
     }
 
     [TestMethod]
@@ -28,20 +39,37 @@ public class AdministradorServicoTest
     {
         // Arrange
         var context = CriarContextoDeTeste();
-        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
-
+        var administradorServico = new AdministradorServico(context);
 
         var adm = new Administrador();
         adm.Email = "teste@teste.com";
         adm.Senha = "teste";
         adm.Perfil = "Adm";
 
-        var administradorServico = new AdministradorServico(context);
-
         // Act
         administradorServico.Incluir(adm);
 
         // Assert
-        Assert.AreEqual(1, administradorServico.Todos(1).Count());
+        Assert.AreEqual(1, context.Administradores.Count());
+    }
+
+    [TestMethod]
+    public void TestandoBuscaPorId()
+    {
+        // Arrange
+        var context = CriarContextoDeTeste();
+        var administradorServico = new AdministradorServico(context);
+
+        var adm = new Administrador();
+        adm.Email = "teste@teste.com";
+        adm.Senha = "teste";
+        adm.Perfil = "Adm";
+
+        // Act
+        administradorServico.Incluir(adm);
+        var admDoBanco = administradorServico.BuscaPorId(adm.Id);
+
+        // Assert
+        Assert.AreEqual(1, admDoBanco?.Id);
     }
 }
